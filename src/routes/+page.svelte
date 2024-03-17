@@ -1,11 +1,33 @@
 <script lang="ts">
-  import LinePlot from "../lib/LinePlot.svelte";
-  // @ts-ignore The types for the d3 library seem to be missing.
-  import * as d3 from "d3";
+  import Chart from "$lib/Chart.svelte";
 
-  let data = d3.ticks(-2, 2, 200).map(Math.sin);
+  async function fetchMeanFlows(sourceID: number) {
+    const response = await fetch(
+      `http://localhost:8000/flow/source/${sourceID}`,
+    );
+    const flowMeans = await response.json();
+    return {
+      title: "Flow Means",
+      type: "bar",
+      backgroundColor: "#FDAF7B",
+      labels: flowMeans.map((flowEntry: FlowEntry) => flowEntry.timestamp),
+      data: flowMeans.map((flowEntry: FlowEntry) => flowEntry.value),
+    };
+  }
 
-  // TODO: We want to fetch this from a CSV file.
+  interface FlowEntry {
+    timestamp: string;
+    value: number;
+  }
+
+  let data = {
+    title: "Flow Means",
+    type: "bar",
+    backgroundColor: "#FDAF7B",
+    labels: [],
+    data: [],
+  };
+
   let sources = {
     1: "bf_plsZUL1100_inflow_ara",
     42: "bf_f03_11e_russikerstr",
@@ -13,21 +35,37 @@
     71: "bf_f02_555_mesikerst",
   };
 
-  $: selectedSource = 1;
+  let selectedSource = 1;
+  $: {
+    fetchMeanFlows(selectedSource).then((newData) => (data = newData));
+  }
 </script>
 
-<div class="container h-full mx-auto flex justify-center items-center">
-  <div class="space-y-10 text-center flex flex-col items-center">
-    <h2 class="h2">UWO Dashboard</h2>
+<div>
+  <div class="container h-full mx-auto flex justify-center items-center">
+    <div class="space-y-10 text-center flex flex-col items-center">
+      <h2 class="h2">UWO Dashboard</h2>
 
-    <select class="select" bind:value={selectedSource}>
-      {#each Object.entries(sources) as [index, source]}
-        <option value={index}>{source}</option>
-      {/each}
-    </select>
-    {selectedSource}
-
-    <LinePlot {data} />
+      <select
+        class="select"
+        bind:value={selectedSource}
+        on:change={() => fetchMeanFlows(selectedSource)}
+      >
+        {#each Object.entries(sources) as [index, source]}
+          <option value={index}>{source}</option>
+        {/each}
+      </select>
+      {selectedSource}
+    </div>
+  </div>
+  <div>
+    <Chart
+      type="bar"
+      title="Flow Means"
+      labels={data.labels}
+      data={data.data}
+      backgroundColor="#FDAF7B"
+    />
   </div>
 </div>
 
@@ -35,8 +73,7 @@
   figure {
     @apply flex relative flex-col;
   }
-  figure svg,
-  .img-bg {
+  figure svg {
     @apply w-64 h-64 md:w-80 md:h-80;
   }
 </style>
