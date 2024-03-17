@@ -15,8 +15,6 @@
 
   $: {
     if (chart) {
-      console.log("Chart exists");
-      console.log(chart.data.datasets);
       chart.data.datasets[0].data = data;
       chart.data.labels = labels;
       chart.update();
@@ -24,6 +22,8 @@
   }
 
   onMount(async () => {
+    const TEXT_COLOR = "#FFFFFF";
+    const TEXT_FONT_SIZE = 16;
     ctx = chartCanvas.getContext("2d");
 
     if (ctx === null) {
@@ -45,12 +45,36 @@
       options: {
         plugins: {
           title: {
-            display: true,
+            display: false,
             text: title,
           },
           legend: {
             display: showLegends,
             position: "bottom",
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Time of day (in 15 minute intervals)",
+              color: TEXT_COLOR,
+              font: {
+                size: TEXT_FONT_SIZE,
+              },
+            },
+            ticks: { color: TEXT_COLOR },
+          },
+          y: {
+            title: {
+              display: true,
+              text: "Average flow rate in Litres / Second",
+              color: TEXT_COLOR,
+              font: {
+                size: TEXT_FONT_SIZE,
+              },
+            },
+            ticks: { color: TEXT_COLOR },
           },
         },
       },
