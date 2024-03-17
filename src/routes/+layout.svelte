@@ -9,7 +9,11 @@
     <!-- App Bar -->
     <AppBar>
       <svelte:fragment slot="lead">
-        <strong class="text-xl">Urban Water Observatory Dashboard</strong>
+        <strong class="text-xl"
+          ><span class="text-cyan-200">U</span>rban
+          <span class="text-cyan-200">W</span>ater
+          <span class="text-cyan-200">O</span>bservatory Dashboard</strong
+        >
       </svelte:fragment>
       <svelte:fragment slot="trail">
         <a
