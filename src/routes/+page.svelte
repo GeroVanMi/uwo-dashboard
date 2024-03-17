@@ -12,9 +12,7 @@
   }
 
   async function fetchFlowMeans(sourceID: number): Promise<FlowMeans> {
-    const response = await fetch(
-      `http://localhost:8000/flow/source/${sourceID}`,
-    );
+    const response = await fetch(`/cache/resampled_flows/${sourceID}.json`);
     const flowMeans = await response.json();
     return {
       labels: flowMeans.map(

@@ -1,8 +1,8 @@
 export const ssr = false;
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "";
 
 async function fetchSources() {
-  const response = await fetch(`${BASE_URL}/flow/sources/`);
+  const response = await fetch("/cache/flow_sources.json");
   return response.json();
 }
 
